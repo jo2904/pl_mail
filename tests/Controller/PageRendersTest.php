@@ -79,6 +79,7 @@ final class PageRendersTest extends WebTestCase
         yield 'admin queue backlog, filtered' => ['/admin/queues/waiting?q=sync&offset=25'];
         yield 'admin integrations' => ['/admin/integrations'];
         yield 'admin push' => ['/admin/push'];
+        yield 'admin sso' => ['/admin/sso'];
         yield 'admin insight reports' => ['/admin/insight-reports'];
         // The section wrapper as well as the frame, because the nav entry
         // renders a pending-count badge that the frame itself never draws —

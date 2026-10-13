@@ -6,8 +6,8 @@ namespace App\Security;
 
 use App\Entity\User\User;
 use App\Service\Oidc\OidcClient;
-use App\Service\Oidc\OidcConfiguration;
 use App\Service\Oidc\OidcLoginFailed;
+use App\Service\Oidc\OidcSettings;
 use App\Service\Oidc\OidcUserResolver;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,10 +53,8 @@ final class OidcAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
 
-    public const string CALLBACK_ROUTE = 'app_login_oidc_callback';
-
     public function __construct(
-        private readonly OidcConfiguration $configuration,
+        private readonly OidcSettings $settings,
         private readonly OidcClient $client,
         private readonly OidcUserResolver $resolver,
         private readonly EntityManagerInterface $entityManager,
@@ -67,9 +65,12 @@ final class OidcAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): bool
     {
-        return true === $this->configuration->isEnabled()
-            && self::CALLBACK_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod(Request::METHOD_GET);
+        // The route first: this is asked of every request the firewall sees,
+        // and whether single sign-on is on is a read of the database that only
+        // the callback has any use for.
+        return OidcClient::CALLBACK_ROUTE === $request->attributes->get('_route')
+            && $request->isMethod(Request::METHOD_GET)
+            && true === $this->settings->current()->isEnabled();
     }
 
     public function authenticate(Request $request): Passport

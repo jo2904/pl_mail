@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Service\Oidc;
 
 use App\Entity\User\User;
+use App\Repository\Oidc\OidcConfigRepository;
 use App\Repository\User\UserRepository;
-use App\Service\Oidc\OidcConfiguration;
 use App\Service\Oidc\OidcIdentity;
 use App\Service\Oidc\OidcLoginFailed;
+use App\Service\Oidc\OidcSettings;
 use App\Service\Oidc\OidcUserResolver;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -169,7 +170,18 @@ final class OidcUserResolverTest extends KernelTestCase
     private function resolver(bool $autoCreate = false, bool $requireVerifiedEmail = true): OidcUserResolver
     {
         return new OidcUserResolver(
-            new OidcConfiguration(self::ISSUER, 'client', 'secret', '', $autoCreate, $requireVerifiedEmail, 'openid email'),
+            // The environment's side of the settings: no row is saved here, so
+            // these are what is in force.
+            new OidcSettings(
+                static::getContainer()->get(OidcConfigRepository::class),
+                self::ISSUER,
+                'client',
+                'secret',
+                '',
+                $autoCreate,
+                true === $requireVerifiedEmail ? 'true' : 'false',
+                'openid email',
+            ),
             $this->users,
             $this->em,
             new NullLogger(),

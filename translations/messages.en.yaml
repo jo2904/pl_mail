@@ -738,6 +738,7 @@ admin:
         performance: Performance
         push: Push
         reset: Reset
+        sso: 'SSO'
         system: System
         updates: Updates
         users: Users
@@ -923,6 +924,32 @@ admin:
     refresh_hint: 'Live panels refresh every 10s'
     # Shown in a card's header while it is collapsed — short enough to read at
     # a glance, specific enough to be worth expanding for.
+    sso:
+        clear_secret: 'Forget the stored client secret'
+        clear_secret_help: 'Empty the issuer and the client ID as well. Sign-in then falls back to the OIDC_* variables in the environment, or switches off if there are none.'
+        env_note: 'Leave issuer, client ID and secret all empty and sign-in falls back to OIDC_ISSUER, OIDC_CLIENT_ID and OIDC_CLIENT_SECRET in the environment, so an installation configured that way keeps working. What is saved here wins over them.'
+        field:
+            auto_create: 'Create an account for people plMail has not seen'
+            auto_create_help: 'On, everybody the provider lets through gets an ordinary account here, so limit who that is at the provider. Off, an administrator creates each account first, with the same address.'
+            button_label: 'Name on the button'
+            button_label_help: 'The login button reads "Sign in with …" and this name. Empty says "single sign-on".'
+            client_id: 'Client ID'
+            client_secret: 'Client secret'
+            issuer: 'Issuer'
+            issuer_help: 'The provider''s issuer URL, exactly as its discovery document states it. In Authentik it is the "OpenID Configuration Issuer" on the provider''s page.'
+            require_verified_email: 'Only link an address the provider has verified'
+            require_verified_email_help: 'A first sign-in finds its account by email address. Switch this off only where people cannot edit their own address at the provider: with it off, anybody who can is able to claim any account that has not signed in through the provider yet.'
+            scopes: 'Scopes'
+            scopes_help: 'Separated by spaces. "openid" is always added, and without "email" a first sign-in cannot find its account. Empty asks for openid, email and profile.'
+        heading: 'Single sign-on'
+        intro: 'Let people sign in through an OpenID Connect provider you already run: Authentik, Keycloak, Authelia and the like. The login page then shows a button above the password form, which stays.'
+        redirect_uri_help: 'Register this at the provider as the redirect URI, exactly as shown.'
+        save: 'Save'
+        saved: 'Single sign-on saved.'
+        status:
+            environment: 'On, from the environment'
+            'off': 'Off'
+            'on': 'On'
     summary:
         accounts: '%count% accounts'
         active: '%count% active'

@@ -37,7 +37,7 @@ use Psr\Log\LoggerInterface;
 final readonly class OidcUserResolver
 {
     public function __construct(
-        private OidcConfiguration $configuration,
+        private OidcSettings $settings,
         private UserRepository $users,
         private EntityManagerInterface $entityManager,
         private LoggerInterface $logger,
@@ -62,7 +62,7 @@ final readonly class OidcUserResolver
             ));
         }
 
-        if (true === $this->configuration->requireVerifiedEmail && false === $identity->emailVerified) {
+        if (true === $this->settings->current()->requireVerifiedEmail && false === $identity->emailVerified) {
             throw new OidcLoginFailed('oidc.email_unverified', sprintf(
                 'Subject "%s" reports %s without email_verified=true; not linking by address',
                 $identity->subject,
@@ -83,7 +83,7 @@ final readonly class OidcUserResolver
             return $this->link($matches[0], $identity);
         }
 
-        if (false === $this->configuration->autoCreate) {
+        if (false === $this->settings->current()->autoCreate) {
             throw new OidcLoginFailed('oidc.no_account', sprintf(
                 'No account holds %s and OIDC_AUTO_CREATE is off',
                 $identity->email,

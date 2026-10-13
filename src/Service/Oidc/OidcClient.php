@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Service\Oidc;
 
 use App\Service\OAuth\OAuthStateStore;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -38,17 +40,27 @@ use UnexpectedValueException;
  */
 final readonly class OidcClient
 {
+    /**
+     * The route the provider sends the browser back to. Named once, here: it
+     * is the redirect URI this class hands the provider, and the request
+     * App\Security\OidcAuthenticator claims.
+     */
+    public const string CALLBACK_ROUTE = 'app_login_oidc_callback';
+
+    private const int TIMEOUT_SECONDS = 10;
+
     private const string SESSION_NAMESPACE = 'oidc_login';
     private const string SESSION_NONCE = 'oidc_login_nonce';
     private const string SESSION_PKCE = 'oidc_login_pkce';
 
     public function __construct(
-        private OidcConfiguration $configuration,
+        private OidcSettings $settings,
         private OidcDiscovery $discovery,
         private IdTokenValidator $idTokenValidator,
         private OAuthStateStore $stateStore,
         private UrlGeneratorInterface $urlGenerator,
         private ClockInterface $clock,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -59,12 +71,13 @@ final readonly class OidcClient
      */
     public function begin(SessionInterface $session): string
     {
-        $endpoints = $this->discovery->endpoints($this->configuration->issuer);
-        $provider  = $this->provider($endpoints);
-        $nonce     = bin2hex(random_bytes(16));
+        $configuration = $this->settings->current();
+        $endpoints     = $this->discovery->endpoints($configuration->issuer);
+        $provider      = $this->provider($configuration, $endpoints);
+        $nonce         = bin2hex(random_bytes(16));
 
         $url = $provider->getAuthorizationUrl([
-            'scope' => $this->configuration->scopes,
+            'scope' => $configuration->scopes,
             'nonce' => $nonce,
         ]);
 
@@ -93,10 +106,22 @@ final readonly class OidcClient
         $session->remove(self::SESSION_NONCE);
         $session->remove(self::SESSION_PKCE);
 
+        // The state first, before anything else in the query is believed. A
+        // callback is a GET anybody can link to, and until the state matches
+        // there is nothing to say this one answers a sign-in this browser
+        // started: read `error` first, and a forged link both writes its
+        // author's text into the log and tells the person the provider turned
+        // them away.
+        $state = $request->query->get('state');
+
+        if (false === is_string($expectedState) || false === is_string($state) || false === hash_equals($expectedState, $state)) {
+            throw new OidcLoginFailed('oidc.failed', 'The callback state does not match the one this session sent');
+        }
+
         // The person declined at the provider, or the provider refused them —
         // Authentik answers `access_denied` when the application's policy
-        // does not let this user in. Checked before the state on purpose: the
-        // answer is the same either way, and it is the one worth showing.
+        // does not let this user in. An error response carries the state like
+        // any other (RFC 6749 § 4.1.2.1), which is why it can wait for it.
         $error = $request->query->get('error');
 
         if (null !== $error) {
@@ -105,12 +130,6 @@ final readonly class OidcClient
                 $error,
                 (string) $request->query->get('error_description', ''),
             ));
-        }
-
-        $state = $request->query->get('state');
-
-        if (false === is_string($expectedState) || null === $state || false === hash_equals($expectedState, $state)) {
-            throw new OidcLoginFailed('oidc.failed', 'The callback state does not match the one this session sent');
         }
 
         if (false === is_string($nonce) || false === is_string($pkce)) {
@@ -123,8 +142,9 @@ final readonly class OidcClient
             throw new OidcLoginFailed('oidc.failed', 'The callback carries no authorisation code');
         }
 
-        $endpoints = $this->discovery->endpoints($this->configuration->issuer);
-        $provider  = $this->provider($endpoints);
+        $configuration = $this->settings->current();
+        $endpoints     = $this->discovery->endpoints($configuration->issuer);
+        $provider      = $this->provider($configuration, $endpoints);
         $provider->setPkceCode($pkce);
 
         try {
@@ -142,7 +162,7 @@ final readonly class OidcClient
         $claims = $this->idTokenValidator->validate(
             $idToken,
             $endpoints['issuer'],
-            $this->configuration->clientId,
+            $configuration->clientId,
             $nonce,
             $this->clock->now()->getTimestamp(),
         );
@@ -176,7 +196,11 @@ final readonly class OidcClient
 
         try {
             $userinfo = $provider->getResourceOwner($token)->toArray();
-        } catch (IdentityProviderException | GuzzleException | UnexpectedValueException) {
+        } catch (IdentityProviderException | GuzzleException | UnexpectedValueException $e) {
+            // Said, because what follows from it is usually a refusal for want
+            // of an address — and that one blames the scopes.
+            $this->logger->notice('Single sign-on: the userinfo endpoint did not answer, continuing on the ID token alone', ['exception' => $e]);
+
             return $claims;
         }
 
@@ -193,13 +217,13 @@ final readonly class OidcClient
     /**
      * @param array{issuer: string, authorization_endpoint: string, token_endpoint: string, userinfo_endpoint: ?string} $endpoints
      */
-    private function provider(array $endpoints): GenericProvider
+    private function provider(OidcConfiguration $configuration, array $endpoints): GenericProvider
     {
         return new GenericProvider([
-            'clientId'                => $this->configuration->clientId,
-            'clientSecret'            => $this->configuration->clientSecret,
+            'clientId'                => $configuration->clientId,
+            'clientSecret'            => $configuration->clientSecret,
             'redirectUri'             => $this->urlGenerator->generate(
-                'app_login_oidc_callback',
+                self::CALLBACK_ROUTE,
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL,
             ),
@@ -211,7 +235,13 @@ final readonly class OidcClient
             // allow; providers that read it strictly see one unknown scope.
             'scopeSeparator'          => ' ',
             'pkceMethod'              => AbstractProvider::PKCE_METHOD_S256,
-            'timeout'                 => 10,
+        ], [
+            // A client of our own, for the one option the league provider does
+            // not pass through: no redirects. The ID token is believed because
+            // of the TLS connection to the endpoint the discovery document
+            // named (see IdTokenValidator), and a redirect is an answer from
+            // somewhere else — over plain http, if that is where it points.
+            'httpClient' => new Client(['timeout' => self::TIMEOUT_SECONDS, 'allow_redirects' => false]),
         ]);
     }
 }

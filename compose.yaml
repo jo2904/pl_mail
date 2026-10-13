@@ -43,7 +43,8 @@ x-app-env: &app-env
   # https, a name without the prefix otherwise (a browser drops a `__Secure-`
   # cookie over HTTP). Set it only to use a name of your own.
   MERCURE_COOKIE_NAME: ${MERCURE_COOKIE_NAME:-}
-  # Single sign-on. Blank is off; see docs/install/configuration.md.
+  # Single sign-on, for an install that would rather not use Admin → SSO. What
+  # is saved there wins over these. Blank is off; see docs/providers/oidc.md.
   OIDC_ISSUER: ${OIDC_ISSUER:-}
   OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
   OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}

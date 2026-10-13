@@ -8,15 +8,18 @@ The published image tags: `latest` follows the most recent release below,
 
 ## Unreleased
 
-**Sign in through Authentik, Keycloak or any other OpenID Connect provider.** Set `OIDC_ISSUER`,
-`OIDC_CLIENT_ID` and `OIDC_CLIENT_SECRET` and the login page offers a "Sign in with …" button above
-the password form, which stays. An account is found by its address the first time — only when the
-provider says it verified that address — and by the provider's subject from then on, so changing the
-address at the provider later changes nothing here. `OIDC_AUTO_CREATE=true` creates an account for
-somebody plMail has never seen; it is off by default. Suspension, the login throttle and two-factor
-apply as they do to a password. Setup, with Authentik step by step, is in
-[Single sign-on](docs/providers/oidc.md). **Migration:** two nullable columns and a unique index on
-`user`, nothing backfilled; reversible.
+**Sign in through Authentik, Keycloak or any other OpenID Connect provider.** Enter the provider's
+issuer, client ID and secret under the new **Admin → SSO** and the login page offers a "Sign in with
+…" button above the password form, which stays; the `OIDC_*` variables do the same for an install
+configured from its compose file, and what is saved in the admin area wins. An account is found by
+its address the first time — only when the provider says it verified that address — and by the
+provider's subject from then on, so changing the address at the provider later changes nothing here.
+A switch creates an account for somebody plMail has never seen; it is off by default. Suspension,
+the login throttle and two-factor apply as they do to a password. Setup, with Authentik step by
+step, is in [Single sign-on](docs/providers/oidc.md). `app:user:oidc-unlink` forgets a link from the
+console, for somebody deleted and re-added at the provider. **Migration:** two nullable columns and
+a unique index on `user`, and a new one-row table `oidc_config`; nothing backfilled, reversible.
+[#106](https://github.com/karatektus/pl_mail/pull/106), by @jo2904.
 
 **Happening soon is wider, with Also spotted beside the list.** The panel opened at the narrowest
 dialog width, so a fortnight of bookings pushed the undated cards under "Also spotted" far down the

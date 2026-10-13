@@ -676,6 +676,7 @@ admin:
         performance: Speed
         push: "Signal flags"
         reset: "Scuttle"
+        sso: 'Fleet''s seal'
         system: Ship
         updates: "New sails"
         users: Th' crew roster
@@ -856,6 +857,32 @@ admin:
         running_for: 'for %duration%'
         waiting_since: 'Waitin'' since'
     refresh_hint: 'Live panels be redrawn every 10s'
+    sso:
+        clear_secret: 'Forget th'' stowed client secret'
+        clear_secret_help: 'Empty th'' issuer an'' th'' client ID with it. Boardin'' then falls back t'' th'' OIDC_* variables in th'' environment, or shuts if there be none.'
+        env_note: 'Leave issuer, client ID an'' secret all empty an'' boardin'' falls back t'' OIDC_ISSUER, OIDC_CLIENT_ID an'' OIDC_CLIENT_SECRET in th'' environment, so a ship rigged that way sails on. What be saved here wins over ''em.'
+        field:
+            auto_create: 'Make a berth fer sailors plMail has never seen'
+            auto_create_help: 'On, every sailor th'' fleet lets through gets a common berth here, so limit who that be at th'' fleet. Off, th'' cap''n makes each berth first, with th'' same bottle address.'
+            button_label: 'Name on th'' button'
+            button_label_help: 'Th'' boardin'' button reads "Board with …" an'' this name. Empty says "yer fleet''s seal".'
+            client_id: 'Client ID'
+            client_secret: 'Client secret'
+            issuer: 'Issuer'
+            issuer_help: 'Th'' fleet''s issuer URL, exactly as its discovery document states it. In Authentik it be th'' "OpenID Configuration Issuer" on th'' provider''s page.'
+            require_verified_email: 'Only tie a bottle address th'' fleet has vouched fer'
+            require_verified_email_help: 'A first boardin'' finds its berth by bottle address. Shut this off only where sailors cannot change their own address at th'' fleet: with it off, any who can may claim any berth that has not boarded through th'' fleet yet.'
+            scopes: 'Scopes'
+            scopes_help: 'Parted by spaces. "openid" be always added, an'' without "email" a first boardin'' cannot find its berth. Empty asks fer openid, email an'' profile.'
+        heading: 'Fleet''s seal'
+        intro: 'Let sailors board through an OpenID Connect fleet ye already run: Authentik, Keycloak, Authelia an'' th'' like. Th'' boardin'' page then shows a button above th'' secret-word form, which stays.'
+        redirect_uri_help: 'Register this at th'' fleet as th'' redirect URI, exactly as shown.'
+        save: 'Stow'
+        saved: 'Fleet''s seal stowed.'
+        status:
+            environment: 'On, from th'' environment'
+            'off': 'Off'
+            'on': 'On'
     summary:
         accounts: '%count% crews'
         active: '%count% astir'

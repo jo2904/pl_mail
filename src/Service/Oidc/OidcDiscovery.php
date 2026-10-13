@@ -45,7 +45,7 @@ final readonly class OidcDiscovery
         // provider reached over plain http is one anybody on the path could
         // impersonate, and sign in as anyone.
         if (false === str_starts_with($issuer, 'https://')) {
-            throw new OidcLoginFailed('oidc.unavailable', sprintf('OIDC_ISSUER must be an https URL, got "%s"', $issuer));
+            throw new OidcLoginFailed('oidc.unavailable', sprintf('The issuer must be an https URL, got "%s"', $issuer));
         }
 
         try {
@@ -69,7 +69,11 @@ final readonly class OidcDiscovery
     {
         $url = rtrim($issuer, '/') . '/.well-known/openid-configuration';
 
-        $document = $this->httpClient->request('GET', $url, ['timeout' => 10])->toArray();
+        // No redirects, for the reason the issuer has to be https: the document
+        // names the endpoints every token is then believed from, so it is read
+        // from the address the operator configured or not at all. A redirect
+        // throws, and reads as the provider being unavailable.
+        $document = $this->httpClient->request('GET', $url, ['timeout' => 10, 'max_redirects' => 0])->toArray();
 
         // OpenID Connect Discovery § 4.3: the document's issuer must be the
         // one it was asked for, exactly. Compared without a trailing slash,

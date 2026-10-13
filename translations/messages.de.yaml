@@ -749,6 +749,7 @@ admin:
         performance: Leistung
         push: Push
         reset: Zurücksetzen
+        sso: 'SSO'
         system: System
         updates: Aktualisierungen
         users: Benutzer
@@ -933,6 +934,32 @@ admin:
         running_for: 'seit %duration%'
         waiting_since: 'Wartet seit'
     refresh_hint: 'Live-Bereiche aktualisieren sich alle 10 s'
+    sso:
+        clear_secret: 'Gespeichertes Client-Secret vergessen'
+        clear_secret_help: 'Leere dazu auch den Issuer und die Client-ID. Die Anmeldung fällt dann auf die OIDC_*-Variablen der Umgebung zurück oder schaltet sich aus, wenn es keine gibt.'
+        env_note: 'Lass Issuer, Client-ID und Secret alle leer, und die Anmeldung fällt auf OIDC_ISSUER, OIDC_CLIENT_ID und OIDC_CLIENT_SECRET aus der Umgebung zurück — eine so eingerichtete Installation läuft also weiter. Was hier gespeichert ist, hat Vorrang.'
+        field:
+            auto_create: 'Konto für Personen anlegen, die plMail noch nicht kennt'
+            auto_create_help: 'An, und jede Person, die der Anbieter durchlässt, bekommt hier ein gewöhnliches Konto — begrenz also beim Anbieter, wer das ist. Aus, und die Administration legt jedes Konto vorher mit derselben Adresse an.'
+            button_label: 'Name auf dem Button'
+            button_label_help: 'Auf dem Login-Button steht „Mit … anmelden“ und dieser Name. Leer heißt es „Single Sign-on“.'
+            client_id: 'Client-ID'
+            client_secret: 'Client-Secret'
+            issuer: 'Issuer'
+            issuer_help: 'Die Issuer-URL des Anbieters, genau so, wie sein Discovery-Dokument sie angibt. In Authentik ist das der „OpenID Configuration Issuer“ auf der Seite des Providers.'
+            require_verified_email: 'Nur eine Adresse verknüpfen, die der Anbieter bestätigt hat'
+            require_verified_email_help: 'Eine erste Anmeldung findet ihr Konto über die E-Mail-Adresse. Schalt das nur aus, wenn man die eigene Adresse beim Anbieter nicht selbst ändern kann: Ist es aus, kann jede Person, die das darf, jedes Konto übernehmen, das sich noch nicht über den Anbieter angemeldet hat.'
+            scopes: 'Scopes'
+            scopes_help: 'Durch Leerzeichen getrennt. „openid“ wird immer ergänzt, und ohne „email“ findet eine erste Anmeldung ihr Konto nicht. Leer fragt openid, email und profile an.'
+        heading: 'Single Sign-on'
+        intro: 'Lass Menschen sich über einen OpenID-Connect-Anbieter anmelden, den du ohnehin betreibst: Authentik, Keycloak, Authelia und ähnliche. Die Login-Seite zeigt dann einen Button über dem Passwortformular, das bleibt.'
+        redirect_uri_help: 'Trag das beim Anbieter als Redirect-URI ein, genau so, wie es hier steht.'
+        save: 'Speichern'
+        saved: 'Single Sign-on gespeichert.'
+        status:
+            environment: 'An, aus der Umgebung'
+            'off': 'Aus'
+            'on': 'An'
     summary:
         accounts: '%count% Konten'
         active: '%count% aktiv'

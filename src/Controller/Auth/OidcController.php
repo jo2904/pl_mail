@@ -7,8 +7,8 @@ namespace App\Controller\Auth;
 use App\Entity\User\User;
 use App\Security\OidcAuthenticator;
 use App\Service\Oidc\OidcClient;
-use App\Service\Oidc\OidcConfiguration;
 use App\Service\Oidc\OidcLoginFailed;
+use App\Service\Oidc\OidcSettings;
 use App\Service\Setup\InstallGuard;
 use LogicException;
 use Psr\Log\LoggerInterface;
@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\SecurityRequestAttributes;
 final class OidcController extends AbstractController
 {
     public function __construct(
-        private readonly OidcConfiguration $configuration,
+        private readonly OidcSettings $settings,
         private readonly OidcClient $client,
         private readonly InstallGuard $installGuard,
         private readonly LoggerInterface $logger,
@@ -45,7 +45,7 @@ final class OidcController extends AbstractController
     #[Route('', name: '', methods: ['GET'])]
     public function start(Request $request): RedirectResponse
     {
-        if (false === $this->configuration->isEnabled()) {
+        if (false === $this->settings->current()->isEnabled()) {
             throw $this->createNotFoundException();
         }
 
@@ -85,7 +85,7 @@ final class OidcController extends AbstractController
     #[Route('/callback', name: '_callback', methods: ['GET'])]
     public function callback(): never
     {
-        if (false === $this->configuration->isEnabled()) {
+        if (false === $this->settings->current()->isEnabled()) {
             throw $this->createNotFoundException();
         }
 

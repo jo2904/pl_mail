@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Service\Oidc\OidcConfiguration;
+use App\Service\Oidc\OidcSettings;
 
 /**
  * Whether the login page offers single sign-on, and what its button says.
@@ -16,13 +16,13 @@ use App\Service\Oidc\OidcConfiguration;
 final readonly class OidcGlobal
 {
     public function __construct(
-        private OidcConfiguration $configuration,
+        private OidcSettings $settings,
     ) {
     }
 
     public function isEnabled(): bool
     {
-        return $this->configuration->isEnabled();
+        return $this->settings->current()->isEnabled();
     }
 
     /**
@@ -31,6 +31,8 @@ final readonly class OidcGlobal
      */
     public function label(): ?string
     {
-        return '' === trim($this->configuration->buttonLabel) ? null : $this->configuration->buttonLabel;
+        $label = trim($this->settings->current()->buttonLabel);
+
+        return '' === $label ? null : $label;
     }
 }

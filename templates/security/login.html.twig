@@ -63,7 +63,10 @@
                         {% endif %}
                     </a>
 
-                    <div class="flex items-center gap-3 my-6 text-xs text-ink-faint" role="separator">
+                    {# No role="separator": that role makes its content
+                       presentational, and a screen reader would then skip the
+                       word that says the form below is the other way in. #}
+                    <div class="flex items-center gap-3 my-6 text-xs text-ink-faint">
                         <span class="flex-1 border-t border-line"></span>
                         {{ 'login.oidc.or'|trans }}
                         <span class="flex-1 border-t border-line"></span>

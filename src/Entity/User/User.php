@@ -51,7 +51,9 @@ use Symfony\Component\Validator\Constraints\DateTime;
 // One account per provider identity. Two rows holding the same pair would make
 // a sign-in through the provider land on whichever Postgres returned first.
 // Both columns are null on every account that never used the provider, and
-// Postgres does not consider nulls equal, so those never collide.
+// Postgres does not consider nulls equal, so those never collide. Issuer
+// first because that is how the one query that reads it asks — both columns,
+// by equality — and an install has one issuer and many subjects.
 #[ORM\UniqueConstraint(name: 'uniq_user_oidc_identity', columns: ['oidc_issuer', 'oidc_subject'])]
 class User extends UserEntityModel implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, BackupCodeInterface
 {
