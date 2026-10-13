@@ -2268,6 +2268,10 @@ login:
         password: Password
         remember_me: Keep me logged in
         submit: Sign in
+    oidc:
+        button: Sign in with single sign-on
+        button_named: Sign in with %provider%
+        or: or
     page_title: Sign in
     register:
         coming_soon: Registration coming soon.

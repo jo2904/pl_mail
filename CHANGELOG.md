@@ -8,6 +8,16 @@ The published image tags: `latest` follows the most recent release below,
 
 ## Unreleased
 
+**Sign in through Authentik, Keycloak or any other OpenID Connect provider.** Set `OIDC_ISSUER`,
+`OIDC_CLIENT_ID` and `OIDC_CLIENT_SECRET` and the login page offers a "Sign in with …" button above
+the password form, which stays. An account is found by its address the first time — only when the
+provider says it verified that address — and by the provider's subject from then on, so changing the
+address at the provider later changes nothing here. `OIDC_AUTO_CREATE=true` creates an account for
+somebody plMail has never seen; it is off by default. Suspension, the login throttle and two-factor
+apply as they do to a password. Setup, with Authentik step by step, is in
+[Single sign-on](docs/providers/oidc.md). **Migration:** two nullable columns and a unique index on
+`user`, nothing backfilled; reversible.
+
 **Happening soon is wider, with Also spotted beside the list.** The panel opened at the narrowest
 dialog width, so a fortnight of bookings pushed the undated cards under "Also spotted" far down the
 scroll. It now opens wide, and on a screen wide enough for it the list and "On your radar" stay on

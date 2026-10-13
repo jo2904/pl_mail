@@ -48,6 +48,11 @@ use Symfony\Component\Validator\Constraints\DateTime;
 // for the one address that can still collide — `deleted-<id>@invalid`, which
 // the admin delete action writes and which nothing stops someone typing.
 #[UniqueEntity(fields: ['email'], message: 'user.email_taken')]
+// One account per provider identity. Two rows holding the same pair would make
+// a sign-in through the provider land on whichever Postgres returned first.
+// Both columns are null on every account that never used the provider, and
+// Postgres does not consider nulls equal, so those never collide.
+#[ORM\UniqueConstraint(name: 'uniq_user_oidc_identity', columns: ['oidc_issuer', 'oidc_subject'])]
 class User extends UserEntityModel implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, BackupCodeInterface
 {
     use TimestampableTrait;
@@ -309,6 +314,33 @@ class User extends UserEntityModel implements UserInterface, PasswordAuthenticat
     public bool $isDeactivated {
         get => null !== $this->deactivatedAt;
     }
+
+    /**
+     * The OpenID Connect identity this account signs in as, if it has one.
+     *
+     * Issuer and subject together, because that pair is the only thing OIDC
+     * promises is stable: `sub` is unique per issuer and nowhere else, and the
+     * address an identity provider reports can be edited there at any time.
+     * Matching on the address on every sign-in would let whoever can change
+     * their own address at the provider walk into any account here that holds
+     * the new one. The address is used once, to link an existing account the
+     * first time, and only when the provider vouches for it — see
+     * App\Service\Oidc\OidcUserResolver.
+     *
+     * The issuer is kept rather than assumed so that pointing the install at a
+     * different provider does not hand the new provider's `sub` values the
+     * old provider's accounts: a row linked to another issuer is relinked by
+     * address, never matched by subject.
+     *
+     * Cleared by the admin delete action, so a removed account cannot be
+     * signed into through the provider and does not hold the identity against
+     * a new account for the same person.
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $oidcIssuer = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $oidcSubject = null;
 
     /**
      * @var Collection<int, Account>

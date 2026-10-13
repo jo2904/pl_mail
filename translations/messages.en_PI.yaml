@@ -2148,6 +2148,10 @@ login:
         password: Secret word
         remember_me: Keep me aboard
         submit: Come aboard
+    oidc:
+        button: Board with yer fleet's seal
+        button_named: Board with %provider%
+        or: or
     page_title: Come aboard
     register:
         coming_soon: Signin' on be comin' soon.
