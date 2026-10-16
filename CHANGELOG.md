@@ -8,6 +8,11 @@ The published image tags: `latest` follows the most recent release below,
 
 ## Unreleased
 
+**A mail can go to Bcc recipients only.** Sending with nobody in To was refused with "Add at least
+one recipient before sending", even with addresses in Cc or Bcc: the window counted all three, but
+the server only counted To. It now counts all three as well. A mail with no recipient at all is
+still refused, and a draft may still be saved with none. No schema change.
+
 **Outlook's `<![endif]-->` no longer shows up in a message.** Mail written for Outlook hides
 parts of itself behind conditional comments, and one form of them ends in a marker that is not
 inside a comment. A mail that also had a comment containing `--` anywhere in it was read by an older
