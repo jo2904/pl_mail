@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:e10e5d0559ab9c2a857d4c77d58875bf76e142d2 -->
+<!-- translated-from: features/mail.md sha1:619a6ad5c5002e28aa57ce04938b15ab54c0d773 -->
 
 # Mail
 
@@ -1066,6 +1066,12 @@ Die Vervollständigung bietet ausschließlich **deine eigenen** gesammelten Kont
 Installation mit mehreren Personen sind die Korrespondenten der einen für die andere unsichtbar, und
 eine Adresse, die zu einem anderen Konto gehört, lässt sich auf keinem Weg auf deinen Entwurf
 setzen.
+
+Eine Liste von Adressen, die du in **An**, **Cc** oder **Bcc** einfügst, wird zu einem Empfänger
+je Adresse, ob durch Semikolon, Komma oder Zeilenumbruch getrennt, mit oder ohne Namen
+(`jo@jo.fr; Ann <ann@example.org>`). Eine Adresse, die schon im Feld steht, kommt nicht doppelt
+hinzu, und was keine Adresse ist, bleibt mit einem Hinweis im Feld stehen, damit du es korrigieren
+kannst.
 
 **Dateien anhängen** nimmt Dateien von deinem Rechner, gedeckelt auf **25 MB je Datei**. **Aus
 einem Dienst anhängen** öffnet die Dateiauswahl für jeden verbundenen Dienst, aus dem plMail

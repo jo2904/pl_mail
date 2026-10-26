@@ -474,6 +474,8 @@ export default class extends Controller {
             select.plmailTyped = input.value;
         });
 
+        input?.addEventListener('paste', (event) => this._pasteAddresses(event, select));
+
         select.on('item_add', () => {
             // The query that produced this chip is spent. Left in place it is
             // what the reopened panel searches for.
@@ -1196,6 +1198,70 @@ export default class extends Controller {
         select.createItem(typed, false);
         select.setTextboxValue('');
         select.focus();
+    }
+
+    /**
+     * A pasted list of addresses becomes one chip per address.
+     *
+     * What other clients put on the clipboard is a list — `a@x.fr; b@y.fr`
+     * from Outlook, `Ann <a@x.fr>, Bob <b@y.fr>` from Gmail, one per line from
+     * a spreadsheet — and Tom Select took it as a single search string, which
+     * matched nothing and could not become a chip either. Its own `splitOn`
+     * does not help: it splits on commas inside a quoted name, and its pieces
+     * still go through createFilter whole, so every `Name <address>` failed.
+     *
+     * Anything that is not an address stays in the box and is reported, the
+     * way Send treats it: the rest of the list is still added.
+     */
+    _pasteAddresses(event, select) {
+        const text = event.clipboardData?.getData('text/plain') ?? '';
+
+        // A quoted name may hold a separator of its own: "Doe, Jane" <j@d.fr>.
+        const pieces = (text.match(/(?:"[^"]*"|[^;,\r\n])+/g) ?? [])
+            .map((piece) => piece.trim())
+            .filter((piece) => '' !== piece);
+
+        // One plain address is an ordinary paste, left to Tom Select so its
+        // suggestions still open on it.
+        if (0 === pieces.length || (1 === pieces.length && false === /[<>]|^mailto:/i.test(pieces[0]))) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const refused = [];
+
+        // A chip for a known contact has the contact's id as its value, so
+        // createItem() would not see the address as taken and add it twice.
+        const present = select.items.map((value) => String(select.options[value]?.text ?? value).toLowerCase());
+
+        for (const piece of pieces) {
+            const bracketed = piece.match(/<([^<>]+)>\s*$/);
+            const address   = (null !== bracketed ? bracketed[1] : piece).trim().replace(/^mailto:/i, '');
+
+            if (false === this.constructor.ADDRESS.test(address)) {
+                refused.push(piece);
+
+                continue;
+            }
+
+            const lower = address.toLowerCase();
+
+            if (present.some((text) => text === lower || text.endsWith(`<${lower}>`))) {
+                continue;
+            }
+
+            present.push(lower);
+            select.createItem(address, false);
+        }
+
+        select.setTextboxValue(refused.join('; '));
+        select.plmailTyped = refused.join('; ');
+
+        // After the chips: adding one clears the error line.
+        if (refused.length > 0) {
+            this._reportError(this._t('invalidAddress', '"%s" is not a valid email address').replace('%s', refused[0]));
+        }
     }
 
     /** The Tom Select instance behind a rendered `.ts-wrapper`. */
