@@ -451,6 +451,20 @@ mailed-by and signed-by were silently missing from every IMAP message.
             </div>
         {% endif %}
 
+        {# "Test my filters on this message." A link inside its own frame: the
+           answer replaces it in place, and nothing is asked of the server
+           until somebody wants to know — most panels are opened for an
+           address or a date. See MessageFilterCheckController. #}
+        <turbo-frame id="message-filters-{{ message.id }}" class="block border-t border-line">
+            <a href="{{ path('app_mail_message_filters', { id: message.id }) }}"
+               class="w-full flex items-center gap-2 px-4 py-2 text-left
+                      text-ink-faint hover:text-ink-soft hover:bg-hover
+                      transition-colors cursor-pointer">
+                <i class="fa-solid fa-filter w-3.5" aria-hidden="true"></i>
+                <span>{{ 'message.filter_check.button'|trans }}</span>
+            </a>
+        </turbo-frame>
+
         {# Copy the whole block. The source is hidden rather than assembled in
            JavaScript: the text owed to the clipboard is the panel's own
            rendering, translations and all, and Twig is where that already
