@@ -320,6 +320,49 @@ export default class extends Controller {
     }
 
     /**
+     * Put the selected chips on the clipboard as `Name <address>; address`.
+     *
+     * Tom Select lets chips be selected and does nothing with Ctrl+C, so the
+     * browser copied the empty text box: there was no way to take a list of
+     * recipients from one message to another. Semicolons because Outlook
+     * reads nothing else, and a name holding a separator is quoted so it does
+     * not come back as two recipients. Cut removes them too, which is how a
+     * list moves from To to Bcc from the keyboard.
+     *
+     * Text typed in the box is the browser's to copy, as everywhere else.
+     */
+    _copyChips(event, select, cut) {
+        if ('' !== select.control_input.value || 0 === (select.activeItems ?? []).length) {
+            return;
+        }
+
+        const chosen = select.activeItems.map((chip) => chip.dataset.value);
+        const values = select.items.filter((value) => chosen.includes(value));
+
+        const text = values.map((value) => {
+            const label = String(select.options[value]?.text ?? value).trim();
+            const match = label.match(/^(.*?)\s*<([^<>]+)>$/);
+
+            if (null === match || '' === match[1].trim()) {
+                return null !== match ? match[2] : label;
+            }
+
+            const name = match[1].trim().replace(/^"(.*)"$/, '$1');
+
+            return /[,;"<>@]/.test(name)
+                ? `"${name.replace(/"/g, '')}" <${match[2]}>`
+                : `${name} <${match[2]}>`;
+        }).join('; ');
+
+        event.clipboardData.setData('text/plain', text);
+        event.preventDefault();
+
+        if (true === cut) {
+            values.forEach((value) => select.removeItem(value));
+        }
+    }
+
+    /**
      * How a recipient is drawn: a suggestion as avatar, name and address, a
      * chip as the name alone, with the address on hover.
      *
@@ -515,6 +558,11 @@ export default class extends Controller {
             this._fillTemplateVariables();
         });
 
+        // Chips selected with a click, Shift+click or Ctrl+A copy as the list
+        // another mail client — or this one's paste — reads back.
+        input?.addEventListener('copy', (event) => this._copyChips(event, select, false));
+        input?.addEventListener('cut', (event) => this._copyChips(event, select, true));
+
         this._reserveRoomForPanel(select, input);
     }
 
@@ -533,7 +581,6 @@ export default class extends Controller {
         window.clearTimeout(select.refreshTimeout);
         select.refreshTimeout = null;
     }
-
 
     /**
      * The address a chip stands for.
@@ -2966,16 +3013,59 @@ export default class extends Controller {
         return subject + this._typedLength();
     }
 
+    /**
+     * Words that say a file comes with the message, in the languages plMail
+     * speaks. Matched against what the user wrote, not against the interface
+     * language: a German interface writing to a French client still writes
+     * "ci-joint". Whole words only, so "attachement" or "Anhänger" do not
+     * count — except the Chinese ones, which have no spaces around them to be
+     * whole words by. A quote is never read: a reply to a mail that had an
+     * attachment would otherwise ask every time.
+     */
+    static ATTACHMENT_WORDS = /(?<![\p{L}\p{N}])(?:attached|attaching|attachments?|enclosed|ci-jointe?s?|pi[eè]ces? jointes?|en pj|pj|anbei|anhang|angeh[aä]ngt|im anhang)(?![\p{L}\p{N}])|附件|附上/iu;
+
+    /**
+     * Does what the user wrote promise a file the window does not carry?
+     *
+     * Asked only at Send, alongside the empty subject and body, and with the
+     * same "Send it anyway?" way out: a false alarm costs one click, a missed
+     * attachment costs a second mail saying "sorry, here it is". Inline images
+     * do not count as attachments — they are in the body, and "see the
+     * attached file" is not about them.
+     */
+    _mentionsMissingAttachment() {
+        const attached = true === this.hasAttachmentsTarget
+            ? this.attachmentsTarget.querySelectorAll('[data-compose-part]').length
+            : 0;
+
+        if (attached > 0) {
+            return false;
+        }
+
+        const subject = this.hasSubjectTarget ? this.subjectTarget.value : '';
+
+        return this.constructor.ATTACHMENT_WORDS.test(`${subject}\n${this._typedText()}`);
+    }
+
     /** Characters the user has actually written, quote excluded. */
     _typedLength() {
+        return this._typedText().length;
+    }
+
+    /**
+     * What the user has actually written, quote excluded — the text both the
+     * emptiness check and the forgotten-attachment check read, so the two
+     * cannot disagree about what "the message" is.
+     */
+    _typedText() {
         // Plain-text mode: the textarea IS the body, and none of the markup
         // this method strips below can exist in it.
         if (true === this._isPlainText()) {
-            return this.plainBodyTarget.value.trim().length;
+            return this.plainBodyTarget.value.trim();
         }
 
         if (false === this.hasBodyTarget) {
-            return 0;
+            return '';
         }
 
         const clone = this.bodyTarget.cloneNode(true);
@@ -3006,7 +3096,7 @@ export default class extends Controller {
             }
         });
 
-        return clone.textContent.trim().length;
+        return clone.textContent.trim();
     }
 
     /**
@@ -3188,6 +3278,10 @@ export default class extends Controller {
 
         if (true === this._hasOpenTemplateVariables()) {
             missing.push(this._t('confirmOpenVariables', 'A template placeholder has not been filled in.'));
+        }
+
+        if (true === this._mentionsMissingAttachment()) {
+            missing.push(this._t('confirmNoAttachment', 'The message mentions an attachment, but nothing is attached.'));
         }
 
         if (0 === missing.length) {

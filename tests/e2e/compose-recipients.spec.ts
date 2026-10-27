@@ -129,6 +129,47 @@ test.describe("compose recipients", () => {
     });
 
     /**
+     * Ctrl+A then Ctrl+C on the chips copies the recipients as a list another
+     * client reads — and Ctrl+X takes them off, which is how a list moves to
+     * Bcc from the keyboard.
+     */
+    test("selected chips copy and cut as a semicolon list", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, KNOWN);
+        await addRecipient(page, OTHER);
+
+        await page.evaluate(() => {
+            const seen: string[] = [];
+            (window as unknown as { copied: string[] }).copied = seen;
+            for (const type of ["copy", "cut"]) {
+                document.addEventListener(type, (event) => {
+                    seen.push((event as ClipboardEvent).clipboardData?.getData("text/plain") ?? "");
+                });
+            }
+        });
+
+        const input = page.locator(`${DOCK} .ts-control input`).first();
+        await input.focus();
+        await page.keyboard.press("ControlOrMeta+a");
+        await page.keyboard.press("ControlOrMeta+c");
+
+        const copied = () => page.evaluate(() => (window as unknown as { copied: string[] }).copied);
+
+        // Matched loosely: an earlier spec may have given the contact a name,
+        // and then the chip copies as `Name <address>`.
+        await expect.poll(copied).toHaveLength(1);
+        expect((await copied())[0]).toMatch(new RegExp(`${KNOWN}>?; .*${OTHER}`));
+        await expect(chips(page)).toHaveCount(2);
+
+        await page.keyboard.press("ControlOrMeta+x");
+
+        await expect.poll(copied).toHaveLength(2);
+        expect((await copied())[1]).toBe((await copied())[0]);
+        await expect(chips(page)).toHaveCount(0);
+    });
+
+    /**
      * A chip dragged from To onto Cc moves there: it leaves To, and Cc holds
      * the same recipient. Pointer events, because Tom Select cancels the
      * mousedown a native drag would need.
