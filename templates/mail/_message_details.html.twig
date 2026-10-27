@@ -451,18 +451,26 @@ mailed-by and signed-by were silently missing from every IMAP message.
             </div>
         {% endif %}
 
-        {# "Test my filters on this message." A link inside its own frame: the
+        {# "Test my filters on this message." A button inside its own frame: the
            answer replaces it in place, and nothing is asked of the server
            until somebody wants to know — most panels are opened for an
-           address or a date. See MessageFilterCheckController. #}
+           address or a date. See MessageFilterCheckController.
+
+           A GET form, not a link. The panel stops every click from bubbling
+           (mail--message-details#stop), and Turbo takes over a link only from
+           a click that reaches the document — so a link here was followed by
+           the browser, and the bare fragment replaced the whole page. Turbo
+           takes over a form from its `submit` event, which nothing stops. #}
         <turbo-frame id="message-filters-{{ message.id }}" class="block border-t border-line">
-            <a href="{{ path('app_mail_message_filters', { id: message.id }) }}"
-               class="w-full flex items-center gap-2 px-4 py-2 text-left
-                      text-ink-faint hover:text-ink-soft hover:bg-hover
-                      transition-colors cursor-pointer">
-                <i class="fa-solid fa-filter w-3.5" aria-hidden="true"></i>
-                <span>{{ 'message.filter_check.button'|trans }}</span>
-            </a>
+            <form method="get" action="{{ path('app_mail_message_filters', { id: message.id }) }}">
+                <button type="submit"
+                        class="w-full flex items-center gap-2 px-4 py-2 text-left
+                               text-ink-faint hover:text-ink-soft hover:bg-hover
+                               transition-colors cursor-pointer">
+                    <i class="fa-solid fa-filter w-3.5" aria-hidden="true"></i>
+                    <span>{{ 'message.filter_check.button'|trans }}</span>
+                </button>
+            </form>
         </turbo-frame>
 
         {# Copy the whole block. The source is hidden rather than assembled in
