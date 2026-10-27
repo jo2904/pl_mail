@@ -970,6 +970,9 @@ account cannot be put on your draft by any route.
 **Double-click a recipient** to correct it: the address goes back into the field, Enter puts the
 fixed one where the old one was. Leaving the field without pressing Enter puts it back as it is.
 
+**Drag a recipient** from one of To, Cc and Bcc onto another to move it there; a contact keeps its
+name. With a mouse or a pen: on a touch screen, cut and paste the address instead.
+
 A list of addresses pasted into **To**, **Cc** or **Bcc** becomes one recipient per address,
 whether it is separated by semicolons, commas, new lines or spaces, and with or without names
 (`jo@jo.fr; Ann <ann@example.org>`, `jo@jo.fr jo2@jo.fr`). A space inside a name does not split

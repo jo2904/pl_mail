@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:fe3fad6014f553561157c74d43d27365b1146a92 -->
+<!-- translated-from: features/mail.md sha1:e38c1ca09c9fa1ae5990a987bd08d38eab1aaed1 -->
 
 # Mail
 
@@ -1070,6 +1070,10 @@ setzen.
 **Doppelklicke einen Empfänger**, um ihn zu korrigieren: Die Adresse kommt zurück ins Feld, Enter
 setzt die korrigierte an die Stelle der alten. Verlässt du das Feld ohne Enter, kommt sie
 unverändert zurück.
+
+**Zieh einen Empfänger** von An, Cc oder Bcc auf ein anderes dieser Felder, um ihn dorthin zu
+verschieben; ein Kontakt behält seinen Namen. Mit Maus oder Stift: Auf einem Touchscreen schneidest
+du die Adresse stattdessen aus und fügst sie ein.
 
 Eine Liste von Adressen, die du in **An**, **Cc** oder **Bcc** einfügst, wird zu einem Empfänger
 je Adresse, ob durch Semikolon, Komma, Zeilenumbruch oder Leerzeichen getrennt, mit oder ohne
