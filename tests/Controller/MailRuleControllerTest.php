@@ -70,11 +70,6 @@ final class MailRuleControllerTest extends WebTestCase
     }
 
     /**
-     * The rule this session added: no conditions means "everything in scope",
-     * which the validator used to reject outright — making "label everything
-     * arriving in this account" impossible to express.
-     */
-    /**
      * "Create a filter from this message" opens the editor on the sender, as
      * a whole address — and with no action, which stays the reader's choice.
      */
@@ -123,6 +118,11 @@ final class MailRuleControllerTest extends WebTestCase
         );
     }
 
+    /**
+     * The rule this session added: no conditions means "everything in scope",
+     * which the validator used to reject outright — making "label everything
+     * arriving in this account" impossible to express.
+     */
     public function testARuleWithNoConditionsIsAllowed(): void
     {
         $client = $this->signIn();
