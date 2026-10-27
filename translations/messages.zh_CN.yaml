@@ -2473,6 +2473,7 @@ message:
         smime_unsupported: "此邮件使用了 plMail 无法解密的算法，目前仅支持 AES。"
     filter_check:
         button: '用此邮件测试我的过滤器'
+        hide: '隐藏过滤器测试'
         sender: '收件服务器是否验证了发件人：'
         verdict:
             pass: '是'

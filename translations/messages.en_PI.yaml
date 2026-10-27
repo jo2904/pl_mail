@@ -2672,6 +2672,7 @@ message:
         smime_unsupported: "This letter be sealed with a cipher plMail can't open; only AES serves."
     filter_check:
         button: 'Try me sortin'' orders on this yarn'
+        hide: 'Stow the sortin'' trial'
         sender: 'Sender vouched for by the harbour:'
         verdict:
             pass: 'aye'

@@ -2794,6 +2794,7 @@ message:
         smime_unsupported: "Diese Nachricht ist mit einem Verfahren verschlüsselt, das plMail nicht öffnen kann; unterstützt wird nur AES."
     filter_check:
         button: 'Meine Filter an dieser Nachricht testen'
+        hide: 'Filtertest ausblenden'
         sender: 'Absender vom empfangenden Server bestätigt:'
         verdict:
             pass: 'ja'

@@ -2807,6 +2807,7 @@ message:
         smime_unsupported: Ce message est chiffré avec un algorithme que plMail ne sait pas ouvrir ; seul AES est pris en charge.
     filter_check:
         button: 'Tester mes filtres sur ce message'
+        hide: 'Masquer le test des filtres'
         sender: 'Expéditeur vérifié par le serveur de réception :'
         verdict:
             pass: 'oui'
