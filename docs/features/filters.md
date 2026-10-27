@@ -129,15 +129,21 @@ the filter after every batch of 200, so the row reads **Applying… 1,400 so far
 that on a reload, on another device, or after you close the tab. It ends as **Applied to N
 messages**, or **Run stopped partway — N messages were done** if something failed.
 
+N counts the messages the filter **matched**. For a filter that files into a tab of your own, a
+second line says how many of them it could not file, because the receiving server did not verify
+their sender (see [Filing into your own tabs](#filing-into-your-own-tabs)): **12 not filed in the
+tab: the receiving server did not verify the sender**. Without that line, a run that filed nothing
+would read as done.
+
 A filter already running refuses to start again: re-running mid-flight would double-count progress
 and race the handler's writes.
 
 ## Filing into your own tabs
 
-A filter can put mail into an inbox tab of your own. Make the tab first, under **Settings → General
-→ Your own tabs**; then add a filter whose action is **File in category** and pick it. Any
-condition works. For "everything from my parcel carriers" it is **Sender's domain is**, one row per
-carrier, inside an **Any** group:
+A filter can put mail into an inbox tab of your own. Make the tab first, at the bottom of the
+**Tabs** card under **Settings → Categories**; then add a filter whose action is **File in
+category** and pick it. Any condition works. For "everything from my parcel carriers" it is
+**Sender's domain is**, one row per carrier, inside an **Any** group:
 
 ```
 All of the following

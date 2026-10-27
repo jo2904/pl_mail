@@ -1,4 +1,4 @@
-<!-- translated-from: features/filters.md sha1:446ac513f7e197133acae2b0794ff92ec911c1d4 -->
+<!-- translated-from: features/filters.md sha1:fe29a19405a3b0bbde0cf5664d86183a406f116e -->
 
 # Filter
 
@@ -147,6 +147,12 @@ einem anderen Gerät oder nachdem du den Tab geschlossen hast, weiterhin so. Sie
 N Nachrichten angewendet** oder als **Lauf vorzeitig gestoppt — N Nachrichten waren erledigt**,
 wenn etwas schiefging.
 
+N zählt die Nachrichten, auf die der Filter **zutrifft**. Bei einem Filter, der in einen eigenen
+Tab ablegt, sagt eine zweite Zeile, wie viele davon er nicht ablegen konnte, weil der empfangende
+Server ihren Absender nicht bestätigt hat (siehe [In eigene Tabs ablegen](#in-eigene-tabs-ablegen)):
+**12 nicht im Tab abgelegt: Der empfangende Server hat den Absender nicht bestätigt**. Ohne diese
+Zeile sähe ein Lauf, der nichts abgelegt hat, wie erledigt aus.
+
 Ein bereits laufender Filter verweigert einen zweiten Start: Mitten im Lauf erneut zu starten
 würde den Fortschritt doppelt zählen und mit den Schreibvorgängen des Handlers ins Rennen
 gehen.
@@ -154,10 +160,10 @@ gehen.
 ## In eigene Tabs ablegen
 
 Ein Filter kann Mail in einen Posteingangs-Tab ablegen, den du selbst angelegt hast. Leg den Tab
-zuerst an, unter **Einstellungen → Allgemein → Deine eigenen Tabs**; dann füge einen Filter hinzu,
-dessen Aktion **In Kategorie ablegen** ist, und wähle ihn aus. Jede Bedingung funktioniert. Für
-„alles von meinen Paketdiensten“ ist es **Absender-Domain ist**, eine Zeile je Paketdienst, in einer
-**Beliebige**-Gruppe:
+zuerst an, unten auf der Karte **Tabs** unter **Einstellungen → Kategorien**; dann füge einen
+Filter hinzu, dessen Aktion **In Kategorie ablegen** ist, und wähle ihn aus. Jede Bedingung
+funktioniert. Für „alles von meinen Paketdiensten“ ist es **Absender-Domain ist**, eine Zeile je
+Paketdienst, in einer **Beliebige**-Gruppe:
 
 ```
 Alle der folgenden
