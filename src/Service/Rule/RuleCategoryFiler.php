@@ -73,7 +73,6 @@ final readonly class RuleCategoryFiler
 
     /**
      * @param array<string,mixed> $action the stored {type, categoryId} entry
-     *
      */
     public function file(MailRule $rule, Message $message, array $action): CategoryFiling
     {
