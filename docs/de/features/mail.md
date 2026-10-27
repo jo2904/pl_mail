@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:fe3fad6014f553561157c74d43d27365b1146a92 -->
+<!-- translated-from: features/mail.md sha1:8b0e5e1a681e20813721baccadf3579d414d2f34 -->
 
 # Mail
 
@@ -1088,6 +1088,12 @@ getippter Betreff ist es wert, behalten zu werden. Das Fenster zu schließen, es
 eine Datei anzuhängen erzwingt jeweils vorher ein Speichern. Unterhalb dieser Schwelle fragt das
 Verlassen der Seite nach, statt das Getippte zu verlieren. Der Papierkorbknopf im Schreibfenster
 löscht den Entwurf tatsächlich, statt das Fenster darüber zuzuklappen.
+
+**Senden** fragt vorher im Fenster nach, wenn die Nachricht keinen Betreff, keinen Text oder einen
+offenen Vorlagen-Platzhalter hat, oder wenn sie **einen Anhang erwähnt, der fehlt**: „Anbei“,
+„Anhang“, „attached“, „ci-joint“, „附件“ und Verwandte im Betreff oder in dem, was du geschrieben
+hast, ohne angehängte Datei. Das zitierte Original wird nicht gelesen, eine Antwort auf eine Mail
+mit Anhang fragt also nicht. Alle Gründe kommen als eine Frage, und **Trotzdem senden** sendet.
 
 Auf dem Telefon bricht die Werkzeugleiste um, statt aus dem Bild zu scrollen, und die Sendepille
 wandert hinauf in die Kopfzeile des Fensters, dorthin, wo früher der Knopf saß.
