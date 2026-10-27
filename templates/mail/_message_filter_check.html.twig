@@ -23,7 +23,7 @@ Variables: message, verdict (SenderVerdict), rules (see RuleMessageCheck::check)
                 {% for row in rules %}
                     <li class="flex items-start gap-2">
                         {% if row.state == 'matches' %}
-                            <i class="fa-solid fa-check text-[10px] mt-1 text-emerald-500" aria-hidden="true"></i>
+                            <i class="fa-solid fa-check text-[10px] mt-1 text-success" aria-hidden="true"></i>
                         {% elseif row.state == 'broken' %}
                             <i class="fa-solid fa-triangle-exclamation text-[10px] mt-1 text-warning" aria-hidden="true"></i>
                         {% else %}
