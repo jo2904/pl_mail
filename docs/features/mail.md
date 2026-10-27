@@ -967,6 +967,13 @@ Autocomplete only ever offers **your own** harvested contacts. On an install wit
 person, nobody's correspondents are visible to anybody else, and an address belonging to another
 account cannot be put on your draft by any route.
 
+**Double-click a recipient** to correct it: the address goes back into the field, Enter puts the
+fixed one where the old one was. Leaving the field without pressing Enter puts it back as it is.
+
+**Copy recipients** by selecting their chips (a click, Shift+click, or Ctrl+A in an empty field)
+and pressing Ctrl+C: they go to the clipboard as `Name <address>; address`, which other mail clients
+read. Ctrl+X does the same and removes them, so a list moves from To to Bcc with a cut and a paste.
+
 A list of addresses pasted into **To**, **Cc** or **Bcc** becomes one recipient per address,
 whether it is separated by semicolons, commas, new lines or spaces, and with or without names
 (`jo@jo.fr; Ann <ann@example.org>`, `jo@jo.fr jo2@jo.fr`). A space inside a name does not split
@@ -981,6 +988,12 @@ least five characters of body **or** a subject — a subject typed on its own is
 Closing the window, popping it out, or attaching a file all force a save first. Below that
 threshold, leaving the page interrupts rather than losing what you typed. The trash button in the
 compose window genuinely deletes the draft rather than closing the window on top of it.
+
+**Send** asks first, in the window, when the message has no subject, no text, a template blank
+still open, or **mentions an attachment that is not there**: "attached", "ci-joint", "pièce
+jointe", "Anbei", "附件" and their kin in the subject or in what you wrote, with no file attached.
+The quoted original is not read, so a reply to a mail that had an attachment does not ask. All the
+reasons come as one question, and **Send anyway** sends.
 
 On a phone the toolbar wraps rather than scrolling out of reach, and the send pill moves up into the
 window's header, where the old button used to be.
