@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:ff0e911efc126715707977b3a9a470f17bfbb681 -->
+<!-- translated-from: features/mail.md sha1:efe5a9d22950b9f90903627696fc1708089a8dd1 -->
 
 # Mail
 
@@ -1066,6 +1066,11 @@ Die Vervollständigung bietet ausschließlich **deine eigenen** gesammelten Kont
 Installation mit mehreren Personen sind die Korrespondenten der einen für die andere unsichtbar, und
 eine Adresse, die zu einem anderen Konto gehört, lässt sich auf keinem Weg auf deinen Entwurf
 setzen.
+
+**Empfänger kopieren**: Wähle ihre Chips aus (ein Klick, Umschalt+Klick oder Strg+A in einem leeren
+Feld) und drücke Strg+C. Sie landen als `Name <Adresse>; Adresse` in der Zwischenablage, was andere
+Mailprogramme lesen. Strg+X tut dasselbe und entfernt sie, so wandert eine Liste mit Ausschneiden
+und Einfügen von An nach Bcc.
 
 Eine Liste von Adressen, die du in **An**, **Cc** oder **Bcc** einfügst, wird zu einem Empfänger
 je Adresse, ob durch Semikolon, Komma, Zeilenumbruch oder Leerzeichen getrennt, mit oder ohne
