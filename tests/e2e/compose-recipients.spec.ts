@@ -91,6 +91,84 @@ test.describe("compose recipients", () => {
         expect(selected).not.toContain(KNOWN);
     });
 
+    /**
+     * A typo in a chip is corrected in place: a double click puts the address
+     * back in the box, Enter commits the fix, and it comes back where it was —
+     * the first To recipient is who a template greets.
+     */
+    test("a double-clicked chip is corrected in place", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, "recipients-typo@exmaple.test");
+        await addRecipient(page, OTHER);
+
+        await chips(page).first().dblclick();
+
+        const input = page.locator(`${DOCK} .ts-control input`).first();
+        await expect(input).toHaveValue("recipients-typo@exmaple.test");
+        await expect(chips(page)).toHaveCount(1);
+
+        await input.fill(KNOWN);
+        await input.press("Enter");
+
+        await expect(chips(page)).toHaveCount(2);
+        await expect(chips(page).first()).toContainText(KNOWN);
+        await expect(chips(page).nth(1)).toContainText(OTHER);
+    });
+
+    /** Leaving the box without Enter puts the chip back rather than losing it. */
+    test("a chip opened for correction and left alone comes back", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, KNOWN);
+        await chips(page).first().dblclick();
+        await page.locator(`${DOCK} [data-compose--compose-target="subject"]`).click();
+
+        await expect(chips(page)).toHaveCount(1);
+        await expect(chips(page).first()).toContainText(KNOWN);
+    });
+
+    /**
+     * Ctrl+A then Ctrl+C on the chips copies the recipients as a list another
+     * client reads — and Ctrl+X takes them off, which is how a list moves to
+     * Bcc from the keyboard.
+     */
+    test("selected chips copy and cut as a semicolon list", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, KNOWN);
+        await addRecipient(page, OTHER);
+
+        await page.evaluate(() => {
+            const seen: string[] = [];
+            (window as unknown as { copied: string[] }).copied = seen;
+            for (const type of ["copy", "cut"]) {
+                document.addEventListener(type, (event) => {
+                    seen.push((event as ClipboardEvent).clipboardData?.getData("text/plain") ?? "");
+                });
+            }
+        });
+
+        const input = page.locator(`${DOCK} .ts-control input`).first();
+        await input.focus();
+        await page.keyboard.press("ControlOrMeta+a");
+        await page.keyboard.press("ControlOrMeta+c");
+
+        const copied = () => page.evaluate(() => (window as unknown as { copied: string[] }).copied);
+
+        // Matched loosely: an earlier spec may have given the contact a name,
+        // and then the chip copies as `Name <address>`.
+        await expect.poll(copied).toHaveLength(1);
+        expect((await copied())[0]).toMatch(new RegExp(`${KNOWN}>?; .*${OTHER}`));
+        await expect(chips(page)).toHaveCount(2);
+
+        await page.keyboard.press("ControlOrMeta+x");
+
+        await expect.poll(copied).toHaveLength(2);
+        expect((await copied())[1]).toBe((await copied())[0]);
+        await expect(chips(page)).toHaveCount(0);
+    });
+
     /** Cc and Bcc are their own fields, and must not collect the To address. */
     test("Cc and Bcc address separately", async ({ page }) => {
         await openCompose(page);
