@@ -112,4 +112,24 @@ test.describe("message details", () => {
         await details.getByRole("button", { name: /show all headers/i }).click();
         await expect(all).toBeVisible();
     });
+
+    /**
+     * "Test my filters on this message" answers inside the panel. As a link it
+     * left the page for the bare fragment: the panel stops every click from
+     * bubbling, and Turbo only takes over a link whose click reaches the
+     * document.
+     */
+    test("testing the filters answers in the panel and stays on the message", async ({ page }) => {
+        await openThread(page);
+
+        const url = page.url();
+        const details = page.locator(DETAILS).first();
+        await details.getByRole("button").first().click();
+
+        await details.getByRole("button", { name: "Test my filters on this message" }).click();
+
+        await expect(details.locator(PANEL)).toContainText("Sender verified by the receiving server");
+        await expect(details.locator(PANEL)).toBeVisible();
+        expect(page.url()).toBe(url);
+    });
 });
