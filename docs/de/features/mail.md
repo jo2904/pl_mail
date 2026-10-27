@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:efe5a9d22950b9f90903627696fc1708089a8dd1 -->
+<!-- translated-from: features/mail.md sha1:6b1364608797d05e4618beebce343408505418a1 -->
 
 # Mail
 
@@ -1067,6 +1067,10 @@ Installation mit mehreren Personen sind die Korrespondenten der einen für die a
 eine Adresse, die zu einem anderen Konto gehört, lässt sich auf keinem Weg auf deinen Entwurf
 setzen.
 
+**Doppelklicke einen Empfänger**, um ihn zu korrigieren: Die Adresse kommt zurück ins Feld, Enter
+setzt die korrigierte an die Stelle der alten. Verlässt du das Feld ohne Enter, kommt sie
+unverändert zurück.
+
 **Empfänger kopieren**: Wähle ihre Chips aus (ein Klick, Umschalt+Klick oder Strg+A in einem leeren
 Feld) und drücke Strg+C. Sie landen als `Name <Adresse>; Adresse` in der Zwischenablage, was andere
 Mailprogramme lesen. Strg+X tut dasselbe und entfernt sie, so wandert eine Liste mit Ausschneiden
@@ -1089,6 +1093,12 @@ getippter Betreff ist es wert, behalten zu werden. Das Fenster zu schließen, es
 eine Datei anzuhängen erzwingt jeweils vorher ein Speichern. Unterhalb dieser Schwelle fragt das
 Verlassen der Seite nach, statt das Getippte zu verlieren. Der Papierkorbknopf im Schreibfenster
 löscht den Entwurf tatsächlich, statt das Fenster darüber zuzuklappen.
+
+**Senden** fragt vorher im Fenster nach, wenn die Nachricht keinen Betreff, keinen Text oder einen
+offenen Vorlagen-Platzhalter hat, oder wenn sie **einen Anhang erwähnt, der fehlt**: „Anbei“,
+„Anhang“, „attached“, „ci-joint“, „附件“ und Verwandte im Betreff oder in dem, was du geschrieben
+hast, ohne angehängte Datei. Das zitierte Original wird nicht gelesen, eine Antwort auf eine Mail
+mit Anhang fragt also nicht. Alle Gründe kommen als eine Frage, und **Trotzdem senden** sendet.
 
 Auf dem Telefon bricht die Werkzeugleiste um, statt aus dem Bild zu scrollen, und die Sendepille
 wandert hinauf in die Kopfzeile des Fensters, dorthin, wo früher der Knopf saß.

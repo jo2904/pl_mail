@@ -92,6 +92,43 @@ test.describe("compose recipients", () => {
     });
 
     /**
+     * A typo in a chip is corrected in place: a double click puts the address
+     * back in the box, Enter commits the fix, and it comes back where it was —
+     * the first To recipient is who a template greets.
+     */
+    test("a double-clicked chip is corrected in place", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, "recipients-typo@exmaple.test");
+        await addRecipient(page, OTHER);
+
+        await chips(page).first().dblclick();
+
+        const input = page.locator(`${DOCK} .ts-control input`).first();
+        await expect(input).toHaveValue("recipients-typo@exmaple.test");
+        await expect(chips(page)).toHaveCount(1);
+
+        await input.fill(KNOWN);
+        await input.press("Enter");
+
+        await expect(chips(page)).toHaveCount(2);
+        await expect(chips(page).first()).toContainText(KNOWN);
+        await expect(chips(page).nth(1)).toContainText(OTHER);
+    });
+
+    /** Leaving the box without Enter puts the chip back rather than losing it. */
+    test("a chip opened for correction and left alone comes back", async ({ page }) => {
+        await openCompose(page);
+
+        await addRecipient(page, KNOWN);
+        await chips(page).first().dblclick();
+        await page.locator(`${DOCK} [data-compose--compose-target="subject"]`).click();
+
+        await expect(chips(page)).toHaveCount(1);
+        await expect(chips(page).first()).toContainText(KNOWN);
+    });
+
+    /**
      * Ctrl+A then Ctrl+C on the chips copies the recipients as a list another
      * client reads — and Ctrl+X takes them off, which is how a list moves to
      * Bcc from the keyboard.
