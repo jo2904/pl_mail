@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:619a6ad5c5002e28aa57ce04938b15ab54c0d773 -->
+<!-- translated-from: features/mail.md sha1:ff0e911efc126715707977b3a9a470f17bfbb681 -->
 
 # Mail
 
@@ -1068,8 +1068,9 @@ eine Adresse, die zu einem anderen Konto gehört, lässt sich auf keinem Weg auf
 setzen.
 
 Eine Liste von Adressen, die du in **An**, **Cc** oder **Bcc** einfügst, wird zu einem Empfänger
-je Adresse, ob durch Semikolon, Komma oder Zeilenumbruch getrennt, mit oder ohne Namen
-(`jo@jo.fr; Ann <ann@example.org>`). Eine Adresse, die schon im Feld steht, kommt nicht doppelt
+je Adresse, ob durch Semikolon, Komma, Zeilenumbruch oder Leerzeichen getrennt, mit oder ohne
+Namen (`jo@jo.fr; Ann <ann@example.org>`, `jo@jo.fr jo2@jo.fr`). Ein Leerzeichen in einem Namen
+trennt ihn nicht. Eine Adresse, die schon im Feld steht, kommt nicht doppelt
 hinzu, und was keine Adresse ist, bleibt mit einem Hinweis im Feld stehen, damit du es korrigieren
 kannst.
 

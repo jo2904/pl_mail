@@ -110,8 +110,8 @@ test.describe("compose recipients", () => {
 
     /**
      * A list copied out of another client is several recipients, not one
-     * search string: `;` from Outlook, `Name <address>,` from Gmail. What is
-     * not an address stays in the box and is reported.
+     * search string: `;` from Outlook, `Name <address>,` from Gmail, or just
+     * spaces. What is not an address stays in the box and is reported.
      */
     test("a pasted list becomes one chip per address", async ({ page }) => {
         await openCompose(page);
@@ -126,9 +126,9 @@ test.describe("compose recipients", () => {
             const data = new DataTransfer();
             data.setData("text/plain", text);
             node.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
-        }, `${KNOWN}; "Doe, Jane" <${OTHER}>, not-an-address; ${KNOWN}`);
+        }, `${KNOWN}; "Doe, Jane" <${OTHER}> recipients-third@example.test, not-an-address; ${KNOWN}`);
 
-        await expect(cc.locator(".item")).toHaveCount(2);
+        await expect(cc.locator(".item")).toHaveCount(3);
         await expect(input).toHaveValue("not-an-address");
         await expect(page.locator(`${DOCK} [data-compose--compose-target="errors"]`)).toContainText("not-an-address");
     });

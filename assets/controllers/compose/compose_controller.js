@@ -1205,10 +1205,11 @@ export default class extends Controller {
      *
      * What other clients put on the clipboard is a list — `a@x.fr; b@y.fr`
      * from Outlook, `Ann <a@x.fr>, Bob <b@y.fr>` from Gmail, one per line from
-     * a spreadsheet — and Tom Select took it as a single search string, which
-     * matched nothing and could not become a chip either. Its own `splitOn`
-     * does not help: it splits on commas inside a quoted name, and its pieces
-     * still go through createFilter whole, so every `Name <address>` failed.
+     * a spreadsheet, or simply `a@x.fr b@y.fr` — and Tom Select took it as a
+     * single search string, which matched nothing and could not become a chip
+     * either. Its own `splitOn` does not help: it splits on commas inside a
+     * quoted name, and its pieces still go through createFilter whole, so
+     * every `Name <address>` failed.
      *
      * Anything that is not an address stays in the box and is reported, the
      * way Send treats it: the rest of the list is still added.
@@ -1216,14 +1217,29 @@ export default class extends Controller {
     _pasteAddresses(event, select) {
         const text = event.clipboardData?.getData('text/plain') ?? '';
 
-        // A quoted name may hold a separator of its own: "Doe, Jane" <j@d.fr>.
-        const pieces = (text.match(/(?:"[^"]*"|[^;,\r\n])+/g) ?? [])
+        // `;`, `,`, a new line or a space separates two addresses, but a space
+        // inside a name does not: `Jean Dupont <jd@x.fr>` is one recipient,
+        // and so is `"Doe, Jane" <j@d.fr>`. A name runs up to its `<…>` and
+        // has no `@` outside quotes, so the address in front of it in
+        // `a@x.fr Jean <jd@x.fr>` is not swallowed into the name.
+        const pieces = (text.match(/(?:"[^"]*"|[^<>"@;,\r\n])*<[^<>]*>|[^\s<>;,"]+/g) ?? [])
             .map((piece) => piece.trim())
-            .filter((piece) => '' !== piece);
+            .filter((piece) => '' !== piece)
+            .map((piece) => {
+                const bracketed = piece.match(/<([^<>]*)>$/);
 
-        // One plain address is an ordinary paste, left to Tom Select so its
-        // suggestions still open on it.
-        if (0 === pieces.length || (1 === pieces.length && false === /[<>]|^mailto:/i.test(pieces[0]))) {
+                return {
+                    piece,
+                    address: (null !== bracketed ? bracketed[1] : piece).trim().replace(/^mailto:/i, ''),
+                };
+            });
+
+        const valid = pieces.filter(({ address }) => true === this.constructor.ADDRESS.test(address));
+
+        // Left to Tom Select, so its suggestions still open on what was
+        // pasted: one plain address, and anything with no address in it at all
+        // — `Jean Dupont` is a contact to look up, not two bad addresses.
+        if (0 === valid.length || (1 === pieces.length && pieces[0].piece === pieces[0].address)) {
             return;
         }
 
@@ -1235,10 +1251,7 @@ export default class extends Controller {
         // createItem() would not see the address as taken and add it twice.
         const present = select.items.map((value) => String(select.options[value]?.text ?? value).toLowerCase());
 
-        for (const piece of pieces) {
-            const bracketed = piece.match(/<([^<>]+)>\s*$/);
-            const address   = (null !== bracketed ? bracketed[1] : piece).trim().replace(/^mailto:/i, '');
-
+        for (const { piece, address } of pieces) {
             if (false === this.constructor.ADDRESS.test(address)) {
                 refused.push(piece);
 
