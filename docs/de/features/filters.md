@@ -1,4 +1,4 @@
-<!-- translated-from: features/filters.md sha1:86cb15b185e7932210e12ed57dde36f69440680c -->
+<!-- translated-from: features/filters.md sha1:fe29a19405a3b0bbde0cf5664d86183a406f116e -->
 
 # Filter
 
@@ -160,10 +160,10 @@ gehen.
 ## In eigene Tabs ablegen
 
 Ein Filter kann Mail in einen Posteingangs-Tab ablegen, den du selbst angelegt hast. Leg den Tab
-zuerst an, unter **Einstellungen → Allgemein → Deine eigenen Tabs**; dann füge einen Filter hinzu,
-dessen Aktion **In Kategorie ablegen** ist, und wähle ihn aus. Jede Bedingung funktioniert. Für
-„alles von meinen Paketdiensten“ ist es **Absender-Domain ist**, eine Zeile je Paketdienst, in einer
-**Beliebige**-Gruppe:
+zuerst an, unten auf der Karte **Tabs** unter **Einstellungen → Kategorien**; dann füge einen
+Filter hinzu, dessen Aktion **In Kategorie ablegen** ist, und wähle ihn aus. Jede Bedingung
+funktioniert. Für „alles von meinen Paketdiensten“ ist es **Absender-Domain ist**, eine Zeile je
+Paketdienst, in einer **Beliebige**-Gruppe:
 
 ```
 Alle der folgenden
