@@ -1,4 +1,4 @@
-<!-- translated-from: features/mail.md sha1:ff0e911efc126715707977b3a9a470f17bfbb681 -->
+<!-- translated-from: features/mail.md sha1:fe3fad6014f553561157c74d43d27365b1146a92 -->
 
 # Mail
 
@@ -1066,6 +1066,10 @@ Die Vervollständigung bietet ausschließlich **deine eigenen** gesammelten Kont
 Installation mit mehreren Personen sind die Korrespondenten der einen für die andere unsichtbar, und
 eine Adresse, die zu einem anderen Konto gehört, lässt sich auf keinem Weg auf deinen Entwurf
 setzen.
+
+**Doppelklicke einen Empfänger**, um ihn zu korrigieren: Die Adresse kommt zurück ins Feld, Enter
+setzt die korrigierte an die Stelle der alten. Verlässt du das Feld ohne Enter, kommt sie
+unverändert zurück.
 
 Eine Liste von Adressen, die du in **An**, **Cc** oder **Bcc** einfügst, wird zu einem Empfänger
 je Adresse, ob durch Semikolon, Komma, Zeilenumbruch oder Leerzeichen getrennt, mit oder ohne
